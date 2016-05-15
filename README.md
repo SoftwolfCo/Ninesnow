@@ -1,5 +1,5 @@
 # Ninesnow
-A simple OS made in assembly.
+It is an open source OS made in C with a focus on being educational
 
 Requires custom version of GCC to compile. Infomation: http://wiki.osdev.org/GCC_Cross-Compiler
 
