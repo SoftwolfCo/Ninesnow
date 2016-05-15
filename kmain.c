@@ -1,0 +1,58 @@
+#include "io.h"
+
+/* The I/O ports */
+#define FB_COMMAND_PORT         0x3D4
+#define FB_DATA_PORT            0x3D5
+
+/* The I/O port commands */
+#define FB_HIGH_BYTE_COMMAND    14
+#define FB_LOW_BYTE_COMMAND     15
+#define BLACK 15
+#define WHITE 0
+#define GREEN 2
+#define CYAN 3
+#define RED 4
+#define MANG 5
+#define BROWN 6
+
+int sum_of_three(int arg1, int arg2, int arg3)
+    {
+        return arg1 + arg2 + arg3;
+    }
+
+void fb_write_cell(unsigned int i, char c[], unsigned char fg, unsigned char bg)
+{
+  char key = c[i];
+  if (key != 0){
+    char *fb = (char *) 0x000B8000;
+    fb[i * 2] = key;
+    fb[i * 2 + 1] = ((fg & 0x0F) << 4) | (bg & 0x0F);
+    i++;
+    fb_write_cell(i, c, fg, bg);
+  }
+}
+
+void fb_move_cursor(unsigned short pos)
+    {
+        outb(FB_COMMAND_PORT, FB_HIGH_BYTE_COMMAND);
+        outb(FB_DATA_PORT,    ((pos >> 8) & 0x00FF));
+        outb(FB_COMMAND_PORT, FB_LOW_BYTE_COMMAND);
+        outb(FB_DATA_PORT,    pos & 0x00FF);
+    }
+
+struct gdt {
+        unsigned int address;
+        unsigned short size;
+    } __attribute__((packed));
+
+int write(char *buf, unsigned int len);
+
+int kmain()
+{
+  char stra[] = "Ninesnow .001       ";
+  fb_write_cell(0, stra, WHITE, CYAN);
+  return 0;
+}
+
+
+
